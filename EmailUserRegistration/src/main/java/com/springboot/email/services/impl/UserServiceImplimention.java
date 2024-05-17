@@ -6,6 +6,7 @@ import com.springboot.email.domain.Confirmation;
 import com.springboot.email.domain.User;
 import com.springboot.email.repository.ConfirmationRepository;
 import com.springboot.email.repository.UserRepository;
+import com.springboot.email.services.EmailServices;
 import com.springboot.email.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,8 @@ public class UserServiceImplimention implements UserService{
 	private final UserRepository userRepo;
 	
 	private final ConfirmationRepository confirmationRepo;
+	
+	private final EmailServices emailService;
 	
 	@Override
 	public User save(User newuser) {
@@ -30,6 +33,10 @@ public class UserServiceImplimention implements UserService{
 		Confirmation newconfirmation = new Confirmation(newuser);
 		confirmationRepo.save(newconfirmation);
 		
+		//sending email 
+		emailService.sendEmailMessage(newuser.getName(), newuser.getEmail(), newconfirmation.getConfirmKey());
+		// sending email with attachments
+		emailService.sendEmailMessageWithFiles(newuser.getName(), newuser.getEmail(), newconfirmation.getConfirmKey());
 		
 		return newuser;
 	}

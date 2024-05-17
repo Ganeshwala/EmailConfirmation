@@ -24,16 +24,16 @@ public class Confirmation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private long id;
-	private String ConfirmKey;
+	private String confirmKey;
 	private LocalDateTime createdDate;
 	
-	@OneToOne(targetEntity = User.class,fetch = FetchType.EAGER,mappedBy = "id")
+	@OneToOne(targetEntity = User.class,fetch = FetchType.EAGER)
 	@JoinColumn(name="userId")
 	private User user;
 	
 	public Confirmation(User user) {
 		this.user = user;
 		this.createdDate = LocalDateTime.now();
-		this.ConfirmKey = UUID.randomUUID().toString();
+		this.confirmKey = UUID.randomUUID().toString();
 	}
 }
