@@ -11,6 +11,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import com.springboot.email.helper.EmailHelper;
 import com.springboot.email.services.EmailServices;
@@ -28,6 +30,7 @@ public class EmailServiceImp implements EmailServices{
 	@Value("${spring.mail.username}")
 	private String senderEmail;
 	private final JavaMailSender emailSender;
+	private final TemplateEngine templateEngine;
 	
 	private final String User_Verification = "User Account Verification";
 	
@@ -61,7 +64,7 @@ public class EmailServiceImp implements EmailServices{
 			helper.setText(EmailHelper.getEmailMessageBody(name, localHost, toker));
 			
 			// add Attachments
-			FileSystemResource fort = new FileSystemResource(new File("/Users/ganesh/Downloads/IMG_0779.jpeg"));
+			FileSystemResource fort = new FileSystemResource(new File("/Users/ganesh/Downloads/IMG_2658.PNG"));
 			helper.addAttachment(fort.getFilename(), fort);
 			
 			emailSender.send(mimeMessage);
@@ -106,6 +109,27 @@ public class EmailServiceImp implements EmailServices{
 	@Async
 	public void sendHtmlFormatEmail(String name, String receiver, String toker) {
 		// TODO Auto-generated method stub
+		try {
+				
+				Context tyleafContext = new Context();
+				tyleafContext.setVariable("name",name);
+				tyleafContext.setVariable("url", EmailHelper.getVerificationLink(localHost, toker));
+				String text = templateEngine.process("emailBody",tyleafContext);
+				
+				MimeMessage mimeMessage = emailSender.createMimeMessage();
+				MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true,"UTF-8");
+				helper.setPriority(1);
+				helper.setSubject(User_Verification);
+				helper.setFrom(senderEmail);
+				helper.setTo(receiver);
+				helper.setText(text,true);
+				
+			
+				emailSender.send(mimeMessage);
+		} catch (MailException | MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

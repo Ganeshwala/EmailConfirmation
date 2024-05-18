@@ -34,9 +34,11 @@ public class UserServiceImplimention implements UserService{
 		confirmationRepo.save(newconfirmation);
 		
 		//sending email 
-		emailService.sendEmailMessage(newuser.getName(), newuser.getEmail(), newconfirmation.getConfirmKey());
+		//emailService.sendEmailMessage(newuser.getName(), newuser.getEmail(), newconfirmation.getConfirmKey());
 		// sending email with attachments
 		emailService.sendEmailMessageWithFiles(newuser.getName(), newuser.getEmail(), newconfirmation.getConfirmKey());
+		
+		emailService.sendHtmlFormatEmail(newuser.getName(), newuser.getEmail(), newconfirmation.getConfirmKey());
 		
 		return newuser;
 	}
